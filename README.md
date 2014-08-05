@@ -14,7 +14,6 @@ This sinatra app serves a [RAE](http://www.rae.es/) api as well as a simple huma
 The api is extremely simple. [http://dulcinea.herokuapp.com/api/?query=casa](http://dulcinea.herokuapp.com/api/?query=casa). The responses are just the same as the ones documented @ nebrija.
 
 `'/'` serves the webpage. The frontend is made with Bootrap + zepto. 
-A nebrija – https://github.com/javierhonduco/nebrija frontend + api
 
 Todo
 ----
