@@ -11,9 +11,6 @@ class App < Sinatra::Base
   helpers Sinatra::Param
   register Sinatra::ActiveRecordExtension  
 
-  #set :static, true
-  #set :public, File.dirname(__FILE__) + '/static'
-  
   get '/' do
     send_file 'views/index.html'
   end
