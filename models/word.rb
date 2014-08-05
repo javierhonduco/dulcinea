@@ -4,5 +4,4 @@ class Word < ActiveRecord::Base
   def to_s
     word
   end
-
 end
