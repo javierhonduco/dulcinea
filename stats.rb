@@ -22,14 +22,7 @@ class Stats
     counter = Metriks.counter("http.response.#{response_type}")
     counter.increment
     
-    from_cache = false
-    if !(@response =~/"from_cache": true/).nil?
-      from_cache = true
-    end
-
-    counter = Metriks.counter("cache.db.#{from_cache}")    
-    counter.increment
-
+    
     [@status, @headers, @response]
   end
 end
