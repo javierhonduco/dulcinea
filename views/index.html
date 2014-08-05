@@ -1,0 +1,268 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Dulcinea search</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+  </head>
+  <body>
+
+    <div class="spinner">
+      Cargando...
+    </div>
+
+    <div id="wrap">
+      <form id="form" action="#">
+        <div class="input-group search_form">
+          <input type="text" class="form-control search_input" id="input" placeholder="Introduce la palabra a buscar">
+          <span class="input-group-btn">
+            <input class="btn btn-success" type="submit" value="¡Buscar!">
+          </span>
+        </div>
+      </form>
+
+      <div id="response"></div>
+    </div>
+
+
+    <div id="footer">
+      <div class="container">
+        <p class="muted info">
+          ¡API! 
+          <a target="_blank" href="http://dulcinea.herokuapp.com/api/?query=casa">http://dulcinea.herokuapp.com/api/?query=word/id</a> 
+          <span style="float: right;">
+          Código y bug reports:
+            <a target="_blank" href="https://github.com/javierhonduco/dulcinea/">web</a>, 
+            <a target="_blank" href="https://github.com/raul/rae-downloader/">downloader</a>, 
+            <a target="_blank" href="https://github.com/javierhonduco/nebrija/">lib</a> 
+          </span>
+        </p>
+      </div>
+    </div>
+
+  </body>
+
+  <style type="text/css">
+  .spinner {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    display: none;
+  }
+  .search_form {
+    width: 500px; 
+    margin-left: auto; 
+    margin-right: auto; 
+    padding-top: 20%;
+  }
+  .meta {
+    opacity: 0.6;
+  }
+  </style>
+
+  <style type="text/css">
+    /* Credits: http://getbootstrap.com/2.3.2/examples/sticky-footer.html */
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    #wrap {
+      height: 100% !important;
+      height: 100%;
+      margin: 0 auto -60px;
+    }
+
+    #push,
+    #footer {
+      height: 60px;
+    }
+    #footer {
+      background-color: #f5f5f5;
+      position: fixed;
+      width: 100%;
+    }
+
+    @media (max-width: 767px) {
+    #footer {
+        margin-left: -20px;
+        margin-right: -20px;
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+    }
+
+    .container {
+      width: auto;
+      max-width: 680px;
+    }
+    .container .info {
+      margin: 20px 0;
+    }
+
+    #response {
+      width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: 20px;
+    }
+
+    #response > p {
+      margin-left: 15px;
+    }
+  </style>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/zepto/1.1.4/zepto.min.js"></script>
+
+  <script>
+    String.prototype.title = function(){
+      return this.charAt(0).toUpperCase() + this.slice(1);
+    }
+
+    String.prototype.dottify = function(){
+      return (this.slice(-1) === '.') ? this : this + ".";
+    }
+
+    String.prototype.pretty = function(){
+      return this.title().dottify();
+    }
+  </script>
+
+  <script>
+
+    var WHELP = function(c){
+      c.log("   __ ___   ___    _             ____          __        ");
+      c.log("  / // (_) / _/___(_)__ ___  ___/ / /_ __  ___/ /__ _  __");
+      c.log(" / _  / / / _/ __/ / -_) _ \/ _  / / // / / _  / -_) |/ /");
+      c.log("/_//_/_/ /_//_/ /_/\__/_//_/\_,_/_/\_, /  \_,_/\__/|___/ ");
+      c.log("                                  /___/                  ");
+      c.log();
+      c.log();
+
+
+      c.log("Help us improve this horrible frontend. PRs are welcome! https://github.com/javierhonduco/dulcinea/");
+    }
+
+    var hashy = function(){
+      if(location.hash !== null && location.hash !== ""){
+        var hash = location.hash.split('#')[1];
+        fetch(hash);
+        $('#input').val(hash);
+      }
+    }
+
+    var events = function(){
+      $('#form').on('submit', function(el){ 
+        el.preventDefault()
+        var query = $('#input').val();
+        fetch(query);
+        location.hash = query;
+      });
+
+      $(window).on('hashchange', function() {
+        
+      });
+    }
+
+    var print_response = function(data, query){
+      var status = data['status'];
+      var search_form = $(".search_form");
+
+      if(status === 'error'){
+        alert('La palabra no existe en la rae');
+      }else{
+        search_form.css({'padding-top':'40px'})
+
+        var type = data['type'];
+        var cont = data['response'];
+        var response = $('#response');
+
+        response.html('');
+
+        if(type === 'multiple'){
+          for(var i=0; i<cont.length; i++){
+            var el = cont[i];
+            multiple(el['word'], el['id']);
+          }
+        }else{
+          single(data, query);
+        }
+      }
+    }
+
+    var fetch = function(query){
+      
+      var loading_feedback = $(".spinner");
+      
+
+      var request = {
+        url: 'http://dulcinea.herokuapp.com/api/', 
+        data:{
+          query: query
+        }, 
+        dataType: 'json',
+        success: function(data){
+          print_response(data, query);
+        },
+        error: function(xhr, type){
+          alert('ha habido un error :(')
+        },
+        beforeSend: function(xhr, settings){
+          loading_feedback.show();
+        },
+        complete: function(xhr, status){
+          loading_feedback.hide();
+        }
+      };
+      $.ajax(request);
+    }
+
+
+    var single = function(data, query){
+      var response = $('#response');
+
+      var cont = data['response'];
+      for(var i=0; i<cont.length; i++){
+        var el = cont[i];
+        var meanings = el['meanings'];
+        response.append('<p><h4>' + el['word'].replace('~', query).pretty() + '<h4></p>');
+
+        for(var j=0; j<meanings.length;j++){
+         var meaning = meanings[j];
+          if(meaning == null){
+            continue;
+          }
+          var meta = (meaning['meta'] === null) ? '' : meaning['meta'] 
+
+          response.append('<p>- ' + meaning['meaning'] + '<span class="meta"> ' +  meta.pretty() + '</span></p>');
+        }
+      }
+    }
+
+    var multiple = function(word, id){
+      $.ajax({ /* >.< */
+        url: 'http://dulcinea.herokuapp.com/api/', 
+        data:{
+          query: id
+          }, 
+        dataType: 'json',
+        success: function(data){
+          single(data, '');
+        }
+      });
+    }
+
+    var load_everything = function(){
+      hashy();
+      events();
+    }
+
+
+
+    $(document).on('ready', function(){
+      load_everything();
+      WHELP(console);
+    }); /* ugh. that's already a callback hell for me. */
+  </script>
+  </body>
+</html>
