@@ -16,7 +16,7 @@ class App < Sinatra::Base
   end
   
   get '/api/random' do
-    param :type, String, required: true
+    param :type, String, required: true, in: ['day', 'random']
 
     type = params[:type]
     if type == 'day'
