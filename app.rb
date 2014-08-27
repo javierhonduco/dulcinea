@@ -22,12 +22,12 @@ class App < Sinatra::Base
     if type == 'day'
       time = Time.now.strftime("%Y%m%d").to_i * 100
       total = Word.count
-      Word.find_by_id(time % total).data
+      response = Word.find_by_id(time % total).data
     else
       offset = rand(Word.count)
-      Word.find_by_id(offset).data
+      response = Word.find_by_id(offset).data
     end
-
+    JSON.pretty_generate(response, :ascii_only=>true)
   end
 
   get '/api/' do
