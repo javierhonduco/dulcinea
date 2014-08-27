@@ -14,6 +14,21 @@ class App < Sinatra::Base
   get '/' do
     send_file 'views/index.html'
   end
+  
+  get '/api/random' do
+    param :type, String, required: true
+
+    type = params[:type]
+    if type == 'day'
+      time = Time.now.strftime("%Y%m%d").to_i * 100
+      total = Word.count
+      Word.find_by_id(time % total).data
+    else
+      offset = rand(Word.count)
+      Word.find_by_id(offset).data
+    end
+
+  end
 
   get '/api/' do
     content_type :json
