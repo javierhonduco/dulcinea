@@ -38,7 +38,7 @@ class App < Sinatra::Base
     
     response = Word.find_by_word(query)
     if response.nil?
-      response = HTTPRae.new.search(query)
+      response = Rae.new.search(query)
 
       w = Word.new
       w.word = query
@@ -66,7 +66,7 @@ class App < Sinatra::Base
       !Word.nil?
     end
     ping.check :external_services, :timeout => 5 do
-      !HTTPRae.new.search('_').nil?
+      !Rae.new.search('_').nil?
     end
   end
 end
