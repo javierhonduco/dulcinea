@@ -92,7 +92,6 @@ PLATFORMS
 DEPENDENCIES
   activerecord
   foreman
-  json
   metriks
   nebrija
   pg
@@ -104,3 +103,6 @@ DEPENDENCIES
   sinatra-param
   sqlite3
   unicorn
+
+BUNDLED WITH
+   1.12.5
