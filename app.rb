@@ -9,12 +9,12 @@ require 'json'
 
 class App < Sinatra::Base
   helpers Sinatra::Param
-  register Sinatra::ActiveRecordExtension  
+  register Sinatra::ActiveRecordExtension
 
   get '/' do
     send_file 'views/index.html'
   end
-  
+
   get '/api/random' do
     param :type, String, required: true, in: ['day', 'random']
 
@@ -27,7 +27,7 @@ class App < Sinatra::Base
       offset = rand(Word.count)
       response = Word.find_by_id(offset).data
     end
-    JSON.pretty_generate(response, :ascii_only=>true)
+    JSON.pretty_generate(response, ascii_only: true)
   end
 
   get '/api/' do
@@ -35,7 +35,7 @@ class App < Sinatra::Base
 
     param :query, String, required: true
     query = params[:query]
-    
+
     response = Word.find_by_word(query)
     if response.nil?
       response = Rae.new.search(query)
@@ -45,27 +45,27 @@ class App < Sinatra::Base
       w.data = response
       w.save
 
-    else 
+    else
       response = response.data
     end
-    JSON.pretty_generate(response, :ascii_only=>true)
+    JSON.pretty_generate(response, ascii_only: true)
   end
 
   get '/stats' do
     content_type :json
 
     JSON.pretty_generate({
-      :total_records    => Word.count,
-      :added_today      => Word.where(:defined_at => 1.day.ago..Time.now).count,
-      :added_yesterday  => Word.where(:defined_at => 2.day.ago..1.day.ago).count,
+      total_records:    Word.count,
+      added_today:      Word.where(defined_at: 1.day.ago..Time.now).count,
+      added_yesterday:  Word.where(defined_at: 2.day.ago..1.day.ago).count,
     })
   end
-  
+
   use Pinglish do |ping|
-    ping.check :postgres, :timeout => 5 do
+    ping.check :postgres, timeout: 5 do
       !Word.nil?
     end
-    ping.check :external_services, :timeout => 5 do
+    ping.check :external_services, timeout: 5 do
       !Rae.new.search('_').nil?
     end
   end
