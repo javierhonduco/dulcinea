@@ -188,7 +188,7 @@
           print_response(data, query);
         },
         error: function(xhr, type){
-          alert('ha habido un error :(')
+          alert('ha habido un error :(\nProbablemente la palabra no exista.')
         },
         beforeSend: function(xhr, settings){
           loading_feedback.show();
