@@ -11,7 +11,6 @@ gem 'sinatra-activerecord'
 gem 'rake'
 gem 'pg'
 
-gem 'metriks'
 gem 'pinglish'
 
 group :development do
