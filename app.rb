@@ -1,24 +1,22 @@
 require 'sinatra/activerecord'
 require 'sinatra/base'
-require 'sinatra/param'
 require 'nebrija'
 require './models/word'
 require 'pinglish'
-require 'metriks'
 require 'json'
 
 class App < Sinatra::Base
-  helpers Sinatra::Param
   register Sinatra::ActiveRecordExtension
 
   get '/' do
     send_file 'views/index.html'
   end
 
-  get '/api/random' do
-    param :type, String, required: true, in: ['day', 'random']
+  get '/api/random/:type' do
+    content_type :json
 
-    type = params[:type]
+    type = params[:type] if ['day', 'random'].include?(params[:type])
+
     if type == 'day'
       time = Time.now.strftime("%Y%m%d").to_i * 100
       total = Word.count
@@ -30,28 +28,14 @@ class App < Sinatra::Base
     JSON.pretty_generate(response, ascii_only: true)
   end
 
-  get '/api/' do
+  get '/api/word/:word' do
     content_type :json
 
-    param :query, String, required: true
-    query = params[:query]
-
-    response = Word.find_by_word(query)
-    if response.nil?
-      response = Rae.new.search(query)
-
-      w = Word.new
-      w.word = query
-      w.data = response
-      w.save
-
-    else
-      response = response.data
-    end
+    response = Rae.new.search(params[:word])
     JSON.pretty_generate(response, ascii_only: true)
   end
 
-  get '/stats' do
+  get '/api/stats' do
     content_type :json
 
     JSON.pretty_generate({

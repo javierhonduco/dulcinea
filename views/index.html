@@ -28,13 +28,13 @@
     <div id="footer">
       <div class="container">
         <p class="muted info">
-          ¡API! 
-          <a target="_blank" href="http://dulcinea.herokuapp.com/api/?query=casa">http://dulcinea.herokuapp.com/api/?query=word/id</a> 
+          ¡API!
+          <a target="_blank" href="http://dulcinea.herokuapp.com/api/word/casa">http://dulcinea.herokuapp.com/api/word/:word</a>
           <span style="float: right;">
           Código y bug reports:
-            <a target="_blank" href="https://github.com/javierhonduco/dulcinea/">web</a>, 
-            <a target="_blank" href="https://github.com/raul/rae-downloader/">downloader</a>, 
-            <a target="_blank" href="https://github.com/javierhonduco/nebrija/">lib</a> 
+            <a target="_blank" href="https://github.com/javierhonduco/dulcinea/">web</a>,
+            <a target="_blank" href="https://github.com/raul/rae-downloader/">downloader</a>,
+            <a target="_blank" href="https://github.com/javierhonduco/nebrija/">lib</a>
           </span>
         </p>
       </div>
@@ -50,9 +50,9 @@
     display: none;
   }
   .search_form {
-    width: 500px; 
-    margin-left: auto; 
-    margin-right: auto; 
+    width: 500px;
+    margin-left: auto;
+    margin-right: auto;
     padding-top: 20%;
   }
   .meta {
@@ -144,7 +144,7 @@
     }
 
     var events = function(){
-      $('#form').on('submit', function(el){ 
+      $('#form').on('submit', function(el){
         el.preventDefault()
         var query = $('#input').val();
         fetch(query);
@@ -152,7 +152,7 @@
       });
 
       $(window).on('hashchange', function() {
-        
+
       });
     }
 
@@ -171,27 +171,18 @@
 
         response.html('');
 
-        if(type === 'multiple'){
-          for(var i=0; i<cont.length; i++){
-            var el = cont[i];
-            multiple(el['word'], el['id']);
-          }
-        }else{
-          single(data, query);
-        }
+        single(data, query);
       }
     }
 
     var fetch = function(query){
-      
+      var API_ENDPOINT = 'api/word/';
+
       var loading_feedback = $(".spinner");
-      
+
 
       var request = {
-        url: 'http://dulcinea.herokuapp.com/api/', 
-        data:{
-          query: query
-        }, 
+        url: API_ENDPOINT + query,
         dataType: 'json',
         success: function(data){
           print_response(data, query);
@@ -213,30 +204,33 @@
     var single = function(data, query){
       var response = $('#response');
 
-      var cont = data['response'];
-      for(var i=0; i<cont.length; i++){
-        var el = cont[i];
-        var meanings = el['meanings'];
-        response.append('<p><h4>' + el['word'].replace('~', query).pretty() + '<h4></p>');
+      var core_meanings = data['response']['core_meanings'];
+      for(var i=0; i<core_meanings.length; i++){
+        var meaning = core_meanings[i]['meaning'];
+        var meta    = core_meanings[i]['meta'] || '';
 
-        for(var j=0; j<meanings.length;j++){
-         var meaning = meanings[j];
-          if(meaning == null){
-            continue;
-          }
-          var meta = (meaning['meta'] === null) ? '' : meaning['meta'] 
+        response.append('<p>- ' + meaning+ '<span class="meta"> ' +  meta.pretty() + '</span></p>');
+      }
 
-          response.append('<p>- ' + meaning['meaning'] + '<span class="meta"> ' +  meta.pretty() + '</span></p>');
+      var other_meanings = data['response']['other_meanings'];
+      for(var i=0; i<other_meanings.length; i++){
+        var expression = other_meanings[i]['expression'];
+        var meanings   = other_meanings[i]['meanings'];
+
+        response.append('<p><h4>' + expression + '<h4></p>');
+
+        for(var j=0; j<meanings.length; j++){
+          var meaning = meanings[j]['meaning'];
+          var meta    = meanings[j]['meta'] || '';
+
+          response.append('<p>- ' + meaning+ '<span class="meta"> ' +  meta.pretty() + '</span></p>');
         }
       }
     }
 
     var multiple = function(word, id){
       $.ajax({ /* >.< */
-        url: 'http://dulcinea.herokuapp.com/api/', 
-        data:{
-          query: id
-          }, 
+        url: API_ENDPOINT + query,
         dataType: 'json',
         success: function(data){
           single(data, word);
