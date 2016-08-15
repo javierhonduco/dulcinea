@@ -228,16 +228,6 @@
       }
     }
 
-    var multiple = function(word, id){
-      $.ajax({ /* >.< */
-        url: API_ENDPOINT + query,
-        dataType: 'json',
-        success: function(data){
-          single(data, word);
-        }
-      });
-    }
-
     var load_everything = function(){
       hashy();
       events();
