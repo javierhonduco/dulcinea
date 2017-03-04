@@ -1,6 +1,7 @@
 require 'sinatra/activerecord'
 require 'sinatra/base'
 require 'nebrija'
+require 'nebrija/version'
 require './models/word'
 require 'pinglish'
 require 'json'
@@ -32,7 +33,8 @@ class App < Sinatra::Base
     content_type :json
 
     response = Rae.new.search(params[:word])
-    JSON.pretty_generate(response, ascii_only: true)
+    version_metadata = { nebrija_version: Nebrija::VERSION }
+    JSON.pretty_generate(response.merge(version_metadata), ascii_only: true)
   end
 
   get '/api/stats' do
