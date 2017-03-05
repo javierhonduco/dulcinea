@@ -6,11 +6,14 @@
 
 This project serves as a HTML + JSON frontend for the [nebrija](https://github.com/javierhonduco/nebrija) RAE library.
 
-It is a simple [Sinatra](http://www.sinatrarb.com/) app that serves a JSON as well as a -hopefully- nice webpage.
+It is a simple [Sinatra](http://www.sinatrarb.com/) app that serves a JSON as well as a -hopefully- nice webpage, and it's being run on Heroku.
+
+Here is how it looks when a word is searched:
+![image](https://cloud.githubusercontent.com/assets/959128/23587327/fe2073fc-01a9-11e7-8ec2-548d3ef0ebaa.png)
 
 ### Routes:
 * `'/'` serves the webpage. The frontend is made with Bootstrap + Zepto.js. The JSON is requested using Ajax.
-* `api/word/:word` is where the API is hosted. The responses are the ones from [nebrija](https://github.com/javierhonduco/nebrija#api) but adding the current nebrija version.
+* `api/word/:word` is where the API is hosted. The responses are the ones from [nebrija](https://github.com/javierhonduco/nebrija) but adding the current nebrija version.
 
 ### Running locally
 ```bash
