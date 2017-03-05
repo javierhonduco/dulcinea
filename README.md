@@ -1,30 +1,25 @@
-Dulcinea: a nebrija frontend + api
-==================================
+## Dulcinea: a nebrija frontend + api
 
 [![Code Climate](https://img.shields.io/codeclimate/github/javierhonduco/dulcinea.svg)](https://codeclimate.com/github/javierhonduco/dulcinea)
 
-What
-----
+### Description
 
-A [nebrija](https://github.com/javierhonduco/nebrija) frontend + api.
+This project serves as a HTML + JSON frontend for the [nebrija](https://github.com/javierhonduco/nebrija) RAE library.
 
-This sinatra app serves the api as well as a simple human readable frontend.
+It is a simple [Sinatra](http://www.sinatrarb.com/) app that serves a JSON as well as a -hopefully- nice webpage.
 
+### Routes:
+* `'/'` serves the webpage. The frontend is made with Bootstrap + Zepto.js. The JSON is requested using Ajax.
+* `api/word/:word` is where the API is hosted. The responses are the ones from [nebrija](https://github.com/javierhonduco/nebrija#api) but adding the current nebrija version.
 
-* The api is extremely simple. [http://dulcinea.herokuapp.com/api/?query=casa](http://dulcinea.herokuapp.com/api/?query=casa). The responses are just the same as the ones documented [nebrija](https://github.com/javierhonduco/nebrija#api).
-
-* `'/'` serves the webpage. The frontend is made with Bootstrap + zepto. 
-
-
-Todo
-----
-
-* Frontend (!important):
-  * Remove bootstrap.
-  * Make it android/ios friendly.
-  * Improve markup & js while staying lean.
-
-
-* Backend:
-  * Move model code into its place.
-  * Add locks to search queries.
+### Running locally
+```bash
+# clone the repo
+$ git clone https://github.com/javierhonduco/dulcinea && cd dulcinea
+# install the dependencies
+$ bundle install
+# run a server that reloads automatically
+$ script/serve
+# or the server run by Heroku (unicorn)
+$ bundle exec foreman start
+```
