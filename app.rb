@@ -37,20 +37,7 @@ class App < Sinatra::Base
     JSON.pretty_generate(response.merge(version_metadata), ascii_only: true)
   end
 
-  get '/api/stats' do
-    content_type :json
-
-    JSON.pretty_generate({
-      total_records:    Word.count,
-      added_today:      Word.where(defined_at: 1.day.ago..Time.now).count,
-      added_yesterday:  Word.where(defined_at: 2.day.ago..1.day.ago).count,
-    })
-  end
-
   use Pinglish do |ping|
-    ping.check :postgres, timeout: 5 do
-      !Word.nil?
-    end
     ping.check :external_services, timeout: 5 do
       !Rae.new.search('_').nil?
     end
